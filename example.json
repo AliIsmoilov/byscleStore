@@ -1,0 +1,21 @@
+[
+    {
+        "store_name": "Yengi Toshmi",
+        "phone": "(831) 476-4321",
+        "email": "tashkent@bikes.shop",
+        "street": "3700 Farobiy",
+        "city": "Tashkent",
+        "state": "TA",
+        "zip_code": "100102"
+    },
+    {
+        "first_name": "Xumoyun",
+        "last_name": "Turabekov",
+        "phone": "",
+        "email": "turabekov@yahoo.com",
+        "street": "9273 Thorne Ave. ",
+        "city": "Orchard Park",
+        "state": "NY",
+        "zip_code": "1111"
+      }
+]
