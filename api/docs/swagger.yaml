@@ -147,6 +147,19 @@ definitions:
       zip_code:
         type: string
     type: object
+  models.CreateUser:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      login:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
   models.CustomerPrimaryKey:
     properties:
       customer_id:
@@ -1160,6 +1173,8 @@ paths:
                 data:
                   type: string
               type: object
+      security:
+      - ApiKeyAuth: []
       summary: Get List Order
       tags:
       - Order
@@ -1169,6 +1184,11 @@ paths:
       description: Create Order
       operationId: create_order
       parameters:
+      - description: Password
+        in: header
+        name: Password
+        required: true
+        type: string
       - description: CreateOrderRequest
         in: body
         name: order
@@ -1215,6 +1235,11 @@ paths:
       description: Delete Order
       operationId: delete_order
       parameters:
+      - description: Password
+        in: header
+        name: Password
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -1300,6 +1325,8 @@ paths:
                 data:
                   type: string
               type: object
+      security:
+      - ApiKeyAuth: []
       summary: Get By ID Order
       tags:
       - Order
@@ -1309,6 +1336,11 @@ paths:
       description: Update PATCH Order
       operationId: update_order
       parameters:
+      - description: Password
+        in: header
+        name: Password
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -1359,6 +1391,11 @@ paths:
       description: Update Order
       operationId: update_order
       parameters:
+      - description: Password
+        in: header
+        name: Password
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -1410,6 +1447,11 @@ paths:
       description: Create Order Item
       operationId: create_order_item
       parameters:
+      - description: Password
+        in: header
+        name: Password
+        required: true
+        type: string
       - description: CreateOrderItemRequest
         in: body
         name: order_item
@@ -1456,6 +1498,11 @@ paths:
       description: Delete Order Item
       operationId: delete_order_item
       parameters:
+      - description: Password
+        in: header
+        name: Password
+        required: true
+        type: string
       - description: id
         in: path
         name: id
@@ -2952,4 +2999,151 @@ paths:
       summary: Update Store
       tags:
       - Store
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: Get List User
+      operationId: get_list_user
+      parameters:
+      - description: offset
+        in: query
+        name: offset
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
+      - description: search
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get List User
+      tags:
+      - User
+    post:
+      consumes:
+      - application/json
+      description: Create User
+      operationId: create_user
+      parameters:
+      - description: CreateUserRequest
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Success Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Create User
+      tags:
+      - User
+  /user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get By ID User
+      operationId: get_by_id_user
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Get By ID User
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

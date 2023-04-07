@@ -2,7 +2,9 @@ package handler
 
 import (
 	"app/api/models"
+	"app/pkg/helper"
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -17,6 +19,7 @@ import (
 // @Tags Order
 // @Accept json
 // @Produce json
+// @Param Password header string true "Password"
 // @Param order body models.CreateOrder true "CreateOrderRequest"
 // @Success 201 {object} Response{data=string} "Success Request"
 // @Response 400 {object} Response{data=string} "Bad Request"
@@ -46,6 +49,7 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 	h.handlerResponse(c, "create order", http.StatusCreated, resp)
 }
 
+// @Security ApiKeyAuth
 // Get By ID Order godoc
 // @ID get_by_id_order
 // @Router /order/{id} [GET]
@@ -59,6 +63,15 @@ func (h *Handler) CreateOrder(c *gin.Context) {
 // @Response 400 {object} Response{data=string} "Bad Request"
 // @Failure 500 {object} Response{data=string} "Server Error"
 func (h *Handler) GetByIdOrder(c *gin.Context) {
+
+	info, exists := c.Get("Auth")
+	if !exists {
+		h.handlerResponse(c, "invalid info token", http.StatusBadRequest, "invalid info token")
+		return
+	}
+
+	User := info.(helper.TokenInfo)
+	fmt.Println(User.UserID)
 
 	id := c.Param("id")
 
@@ -77,6 +90,7 @@ func (h *Handler) GetByIdOrder(c *gin.Context) {
 	h.handlerResponse(c, "get order by id", http.StatusCreated, resp)
 }
 
+// @Security ApiKeyAuth
 // Get List Order godoc
 // @ID get_list_order
 // @Router /order [GET]
@@ -92,6 +106,15 @@ func (h *Handler) GetByIdOrder(c *gin.Context) {
 // @Response 400 {object} Response{data=string} "Bad Request"
 // @Failure 500 {object} Response{data=string} "Server Error"
 func (h *Handler) GetListOrder(c *gin.Context) {
+
+	info, exists := c.Get("Auth")
+	if !exists {
+		h.handlerResponse(c, "invalid info token", http.StatusBadRequest, "invalid info token")
+		return
+	}
+
+	User := info.(helper.TokenInfo)
+	fmt.Println(User.UserID)
 
 	offset, err := h.getOffsetQuery(c.Query("offset"))
 	if err != nil {
@@ -126,6 +149,7 @@ func (h *Handler) GetListOrder(c *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
+// @Param Password header string true "Password"
 // @Param id path string true "id"
 // @Param order body models.UpdateOrder true "UpdateOrderRequest"
 // @Success 202 {object} Response{data=string} "Success Request"
@@ -179,6 +203,7 @@ func (h *Handler) UpdateOrder(c *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
+// @Param Password header string true "Password"
 // @Param id path string true "id"
 // @Param order body models.PatchRequest true "UpdatePatchRequest"
 // @Success 202 {object} Response{data=string} "Success Request"
@@ -232,6 +257,7 @@ func (h *Handler) UpdatePatchOrder(c *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
+// @Param Password header string true "Password"
 // @Param id path string true "id"
 // @Param order body models.OrderPrimaryKey true "DeleteOrderRequest"
 // @Success 204 {object} Response{data=string} "Success Request"
@@ -269,6 +295,7 @@ func (h *Handler) DeleteOrder(c *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
+// @Param Password header string true "Password"
 // @Param order_item body models.CreateOrderItem true "CreateOrderItemRequest"
 // @Success 201 {object} Response{data=string} "Success Request"
 // @Response 400 {object} Response{data=string} "Bad Request"
@@ -306,6 +333,7 @@ func (h *Handler) CreateOrderItem(c *gin.Context) {
 // @Tags Order
 // @Accept json
 // @Produce json
+// @Param Password header string true "Password"
 // @Param id path string true "id"
 // @Param item_id query string true "item_id"
 // @Param orderItem body models.OrderItemPrimaryKey true "DeleteOrderItemRequest"

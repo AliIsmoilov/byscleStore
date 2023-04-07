@@ -20,7 +20,8 @@ type Store struct {
 	staff    storage.StaffRepoI
 	order    storage.OrderRepoI
 	promocode storage.PromoCodeI 
-	report 	 storage.RaportI	
+	report 	 storage.RaportI
+	user	 storage.UserRepoI
 }
 
 func NewConnectPostgresql(cfg *config.Config) (storage.StorageI, error) {
@@ -53,6 +54,7 @@ func NewConnectPostgresql(cfg *config.Config) (storage.StorageI, error) {
 		order:    NewOrderRepo(pgpool),
 		promocode: NewPromoCodeRepo(pgpool),
 		report: 	NewReportRepo(pgpool),
+		user: 		NewUserRepo(pgpool),
 	}, nil
 }
 
@@ -138,4 +140,12 @@ func (s *Store) Raport() storage.RaportI {
 	}
 
 	return s.report
+}
+
+func (s *Store) User() storage.UserRepoI {
+	if s.user == nil {
+		s.user = NewUserRepo(s.db)
+	}
+
+	return s.user
 }

@@ -15,6 +15,17 @@ import (
 
 func NewApi(r *gin.Engine, cfg *config.Config, store storage.StorageI, logger logger.LoggerI) {
 	handler := handler.NewHandler(cfg, store, logger)
+
+	// @securityDefinitions.apikey ApiKeyAuth
+	// @in header
+	// @name Authorization
+
+	r.Use(customCORSMiddleware())
+
+	v1 := r.Group("/v1")
+
+	v1.Use(handler.AuthMiddleware())
+
 	// category api
 	r.POST("/category", handler.CreateCategory)
 	r.GET("/category/:id", handler.GetByIdCategory)
@@ -69,8 +80,8 @@ func NewApi(r *gin.Engine, cfg *config.Config, store storage.StorageI, logger lo
 
 	// order api
 	r.POST("/order", handler.CreateOrder)
-	r.GET("/order/:id", handler.GetByIdOrder)
-	r.GET("/order", handler.GetListOrder)
+	r.GET("/order/:id",  handler.AuthMiddleware(), handler.GetByIdOrder)
+	r.GET("/order", handler.AuthMiddleware(), handler.GetListOrder)
 	r.PUT("/order/:id", handler.UpdateOrder)
 	r.PATCH("/order/:id", handler.UpdatePatchOrder)
 	r.DELETE("/order/:id", handler.DeleteOrder)
@@ -84,6 +95,11 @@ func NewApi(r *gin.Engine, cfg *config.Config, store storage.StorageI, logger lo
 	r.PUT("/promocode/:id", handler.UpdatePromoCode)
 	r.DELETE("/promocode/:id", handler.DeletePromoCode)
 	// r.PATCH("/staff/:id", handler.UpdatePatchStaff)
+
+	// user api
+	r.POST("/user", handler.CreateUsera)
+	r.GET("/user/:id", handler.GetByIdUser)
+	r.GET("/user", handler.GetListUser)
 
 
 	
@@ -102,4 +118,21 @@ func NewApiReport(r *gin.Engine, cfg *config.Config, store storage.StorageI, log
 	r.GET("/staff_report", handler.GetStaffSell_Report)
 	r.GET("/order_total_sum", handler.Order_Total_sum)
 
+}
+
+
+func customCORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		c.Header("Acces-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, PATCH, DELETE, HEAD")
+		c.Header("Access-Control-Allow-Headers", "Platform-Id, Content-Type, Content-Length, Accept-Encoding, X-CSF-TOKEN, Authorization, Cache-Control")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
 }
