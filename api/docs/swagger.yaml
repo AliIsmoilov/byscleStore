@@ -176,6 +176,18 @@ definitions:
       to_store:
         type: integer
     type: object
+  models.Login:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
+  models.LoginResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
   models.OrderItemPrimaryKey:
     properties:
       item_id:
@@ -200,6 +212,26 @@ definitions:
     properties:
       product_id:
         type: integer
+    type: object
+  models.Register:
+    properties:
+      first_name:
+        type: string
+      last_name:
+        type: string
+      login:
+        type: string
+      password:
+        type: string
+      phone_number:
+        type: string
+      user_type:
+        type: string
+    type: object
+  models.RegisterResponse:
+    properties:
+      access_token:
+        type: string
     type: object
   models.StaffPrimaryKey:
     properties:
@@ -1124,6 +1156,37 @@ paths:
       summary: Update Customer
       tags:
       - Customer
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Create Login
+      operationId: login
+      parameters:
+      - description: LoginRequestBody
+        in: body
+        name: Login
+        required: true
+        schema:
+          $ref: '#/definitions/models.Login'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: GetLoginBody
+          schema:
+            $ref: '#/definitions/models.LoginResponse'
+        "400":
+          description: Invalid Argument
+          schema:
+            type: string
+        "500":
+          description: Server Error
+          schema:
+            type: string
+      summary: Create Login
+      tags:
+      - Login
   /order:
     get:
       consumes:
@@ -2125,6 +2188,37 @@ paths:
       summary: Update PromoCode
       tags:
       - PromoCode
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create Register
+      operationId: register
+      parameters:
+      - description: RegisterRequestBody
+        in: body
+        name: Regester
+        required: true
+        schema:
+          $ref: '#/definitions/models.Register'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: GetRegisterBody
+          schema:
+            $ref: '#/definitions/models.RegisterResponse'
+        "400":
+          description: Invalid Argument
+          schema:
+            type: string
+        "500":
+          description: Server Error
+          schema:
+            type: string
+      summary: Create Register
+      tags:
+      - Register
   /staff:
     get:
       consumes:

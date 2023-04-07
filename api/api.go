@@ -101,7 +101,11 @@ func NewApi(r *gin.Engine, cfg *config.Config, store storage.StorageI, logger lo
 	r.GET("/user/:id", handler.GetByIdUser)
 	r.GET("/user", handler.GetListUser)
 
+	// registration api
+	r.POST("/register", handler.Register)
 
+	// login api
+	r.POST("/login", handler.Login)
 	
 
 	url := ginSwagger.URL("swagger/doc.json") // The url pointing to API definition

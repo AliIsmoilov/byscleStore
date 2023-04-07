@@ -3,6 +3,7 @@ package postgresql
 import (
 	"app/api/models"
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -22,6 +23,17 @@ func NewUserRepo(db *pgxpool.Pool) *userRepo {
 func (r *userRepo) Create(ctx context.Context, req *models.CreateUser) (string, error) {
 
 	id := uuid.New().String()
+	var exists int
+	
+	err := r.db.QueryRow(context.Background(), 
+	"SELECT COUNT(*) from users where login = $1 AND password = $2", req.Login, req.Password).Scan(&exists)
+	if err != nil{
+		return "", err 
+	}
+
+	if exists != 0{
+		return "", errors.New("such login and password already exist")
+	}
 
 	query := `
 		INSERT INTO users(
@@ -36,7 +48,7 @@ func (r *userRepo) Create(ctx context.Context, req *models.CreateUser) (string, 
 		VALUES (
 			$1, $2, $3, $4, $5, $6, now()) RETURNING id
 	`
-	err := r.db.QueryRow(ctx, query,
+	err = r.db.QueryRow(ctx, query,
 		id,
 		req.FirstName,
 		req.LastName,
@@ -189,59 +201,40 @@ func (r *userRepo) UpdatePut(ctx context.Context, req *models.UpdateUser) (int64
 	return result.RowsAffected(), nil
 }
 
-// func (r *customerRepo) UpdatePatch(ctx context.Context, req *models.PatchRequest) (int64, error) {
-// 	var (
-// 		query string
-// 		set   string
-// 	)
+func (r *userRepo) GetByID_Login(ctx context.Context, req *models.Login) (*models.User, error) {
 
-// 	if len(req.Fields) <= 0 {
-// 		return 0, errors.New("no fields")
-// 	}
+	var (
+		query    string
+		user models.User
+	)
 
-// 	i := 0
-// 	for key := range req.Fields {
-// 		if i == len(req.Fields)-1 {
-// 			set += fmt.Sprintf(" %s = :%s ", key, key)
-// 		} else {
-// 			set += fmt.Sprintf(" %s = :%s, ", key, key)
-// 		}
-// 		i++
-// 	}
+	query = `
+		SELECT
+			id, 
+			first_name,
+			last_name,
+			login,
+			password,
+			phone_number,
+			TO_CHAR(created_at, 'YYYY-MM-DD HH24-MI-SS'),
+			TO_CHAR(updated_at, 'YYYY-MM-DD HH24-MI-SS')
+		FROM users
+		WHERE login = $1 AND password = $2
+	`
 
-// 	query = `
-// 		UPDATE
-// 		customers
-// 		SET
-// 		` + set + `
-// 		WHERE customer_id = :customer_id
-// 	`
+	err := r.db.QueryRow(ctx, query, req.Login, req.Password).Scan(
+		&user.UserId,
+		&user.FirstName,
+		&user.LastName,
+		&user.Login,
+		&user.Password,
+		&user.Phone_number,
+		&user.Created_at,
+		&user.Updated_at,
+	)
+	if err != nil {
+		return nil, err
+	}
 
-// 	req.Fields["customer_id"] = req.ID
-
-// 	query, args := helper.ReplaceQueryParams(query, req.Fields)
-
-// 	fmt.Println(query)
-
-// 	result, err := r.db.Exec(ctx, query, args...)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return result.RowsAffected(), nil
-// }
-
-// func (r *customerRepo) Delete(ctx context.Context, req *models.CustomerPrimaryKey) (int64, error) {
-// 	query := `
-// 		DELETE 
-// 		FROM customers
-// 		WHERE customer_id = $1
-// 	`
-
-// 	result, err := r.db.Exec(ctx, query, req.CustomerId)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return result.RowsAffected(), nil
-// }
+	return &user, nil
+}

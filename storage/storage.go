@@ -102,6 +102,7 @@ type UserRepoI interface {
 	Create(ctx context.Context, req *models.CreateUser) (string, error)
 	GetByID(context.Context, *models.UserPrimaryKey) (*models.User, error)
 	GetList(ctx context.Context, req *models.GetListUserRequest) (resp *models.GetListUserResponse, err error)
+	GetByID_Login(ctx context.Context, req *models.Login) (*models.User, error)
 	// UpdatePromoCode(ctx context.Context, req *models.UpdatePromoCode) (int64, error)
 	// Delete(ctx context.Context, req *models.PromoCodePrimaryKey) (int64, error)
 }
